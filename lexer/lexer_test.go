@@ -53,13 +53,11 @@ func TestNew(t *testing.T) {
 func TestReadChar_WhenReadPositionWithinInput(t *testing.T) {
 	input := `((`
 
-	l := &Lexer{input: input}
+	l := New(input)
 
 	var expectedCh byte = '('
 	expectedReadPosition := 1
 	expectedPosition := 0
-
-	l.readChar()
 
 	if l.ch != expectedCh {
 		t.Errorf("Lexer.ch wrong, expected %q, got %q",
@@ -78,7 +76,8 @@ func TestReadChar_WhenReadPositionWithinInput(t *testing.T) {
 }
 
 func TestNextToken(t *testing.T) {
-	input := `(){}#+-*/abcde`
+	input := `( ) { } # + - * / 
+abcde 123 -123`
 
 	tests := []struct {
 		expectedType     token.TokenType
@@ -87,16 +86,18 @@ func TestNextToken(t *testing.T) {
 		expectedLine     int
 	}{
 		{token.LPAREN, "(", 0, 1},
-		{token.RPAREN, ")", 1, 1},
-		{token.LBRACE, "{", 2, 1},
-		{token.RBRACE, "}", 3, 1},
-		{token.COMMENT, "#", 4, 1},
-		{token.OP_PLUS, "+", 5, 1},
-		{token.OP_MINUS, "-", 6, 1},
-		{token.OP_MULT, "*", 7, 1},
-		{token.OP_DIV, "/", 8, 1},
-		{token.ID, "abcde", 9, 1},
-		{token.EOF, "", 14, 1},
+		{token.RPAREN, ")", 2, 1},
+		{token.LBRACE, "{", 4, 1},
+		{token.RBRACE, "}", 6, 1},
+		{token.COMMENT, "#", 8, 1},
+		{token.OP_PLUS, "+", 10, 1},
+		{token.OP_MINUS, "-", 12, 1},
+		{token.OP_MULT, "*", 14, 1},
+		{token.OP_DIV, "/", 16, 1},
+		{token.ID, "abcde", 0, 2},
+		{token.INT, "123", 6, 2},
+		{token.INT, "-123", 10, 2},
+		{token.EOF, "", 14, 2},
 	}
 
 	l := New(input)
