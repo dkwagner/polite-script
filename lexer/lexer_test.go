@@ -13,11 +13,13 @@ func TestNew(t *testing.T) {
 		expectedPosition     int
 		expectedReadPosition int
 		expectedCh           byte
+		expectedLine         int
 	}{
 		expectedInput:        input,
 		expectedPosition:     0,
 		expectedReadPosition: 1,
 		expectedCh:           '(',
+		expectedLine:         1,
 	}
 
 	l := New(input)
@@ -40,6 +42,11 @@ func TestNew(t *testing.T) {
 	if l.ch != test.expectedCh {
 		t.Errorf("Lexer.input wrong, expected %q, got %q",
 			test.expectedCh, l.ch)
+	}
+
+	if l.line != test.expectedLine {
+		t.Errorf("Lexer.line wrong, expected %d, got %d",
+			test.expectedLine, l.line)
 	}
 }
 
@@ -71,18 +78,25 @@ func TestReadChar_WhenReadPositionWithinInput(t *testing.T) {
 }
 
 func TestNextToken(t *testing.T) {
-	input := `(){}#`
+	input := `(){}#+-*/abcde`
 
 	tests := []struct {
-		expectedType    token.TokenType
-		expectedLiteral string
+		expectedType     token.TokenType
+		expectedLiteral  string
+		expectedPosition int
+		expectedLine     int
 	}{
-		{token.LPAREN, "("},
-		{token.RPAREN, ")"},
-		{token.LBRACE, "{"},
-		{token.RBRACE, "}"},
-		{token.COMMENT, "#"},
-		{token.EOF, ""},
+		{token.LPAREN, "(", 0, 1},
+		{token.RPAREN, ")", 1, 1},
+		{token.LBRACE, "{", 2, 1},
+		{token.RBRACE, "}", 3, 1},
+		{token.COMMENT, "#", 4, 1},
+		{token.OP_PLUS, "+", 5, 1},
+		{token.OP_MINUS, "-", 6, 1},
+		{token.OP_MULT, "*", 7, 1},
+		{token.OP_DIV, "/", 8, 1},
+		{token.ID, "abcde", 9, 1},
+		{token.EOF, "", 14, 1},
 	}
 
 	l := New(input)
@@ -98,6 +112,16 @@ func TestNextToken(t *testing.T) {
 		if tok.Literal != tt.expectedLiteral {
 			t.Errorf("tests[%d] - literal wrong. expected=%q, got=%q",
 				i, tt.expectedLiteral, tok.Literal)
+		}
+
+		if tok.Position != tt.expectedPosition {
+			t.Errorf("tests[%d] - Position wrong. expected=%d, got=%d",
+				i, tt.expectedPosition, tok.Position)
+		}
+
+		if tok.Line != tt.expectedLine {
+			t.Errorf("tests[%d] - Line wrong. expected=%d, got=%d",
+				i, tt.expectedLine, tok.Line)
 		}
 	}
 }
