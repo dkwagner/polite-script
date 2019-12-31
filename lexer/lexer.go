@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"fmt"
+	"os"
 	"polite-script/token"
 	"polite-script/util"
 	"strings"
@@ -28,7 +29,6 @@ func init() {
 	reservedPhrases[token.OP_LESS] = "is less than"
 	reservedPhrases[token.OP_GREATER_OR_EQUAL] = "is greater than or equal to"
 	reservedPhrases[token.OP_LESS_OR_EQUAL] = "is less than or equal to"
-	reservedPhrases[token.OP_PLUS] = "plus"
 }
 
 type Lexer struct {
@@ -37,6 +37,12 @@ type Lexer struct {
 	readPosition int  // current reading position in input (actual cursor in input, not relative to line)
 	line         int  //current line being read of input
 	ch           byte // current char under examination
+}
+
+func New(input string) *Lexer {
+	l := &Lexer{input: input, line: 1, position: -1}
+	l.readChar()
+	return l
 }
 
 func (l *Lexer) NextToken() token.Token {
@@ -56,7 +62,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '}':
 		tok = newToken(token.RBRACE, "}", l.position, l.line)
 	case '#':
-		tok = newToken(token.COMMENT, "#", l.position, l.line)
+		tok = comment(l)
 	case '+':
 		tok = newToken(token.OP_PLUS, "+", l.position, l.line)
 	case '-':
@@ -65,6 +71,8 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.OP_MULT, "*", l.position, l.line)
 	case '/':
 		tok = newToken(token.OP_DIV, "/", l.position, l.line)
+	case '"':
+		tok = stringLiteral(l)
 	case 0:
 		tok = newToken(token.EOF, "", l.position, l.line)
 	default:
@@ -73,12 +81,6 @@ func (l *Lexer) NextToken() token.Token {
 
 	l.readChar()
 	return tok
-}
-
-func New(input string) *Lexer {
-	l := &Lexer{input: input, line: 1, position: -1}
-	l.readChar()
-	return l
 }
 
 func (l *Lexer) readChar() {
@@ -156,4 +158,50 @@ func minusOrNumber(l *Lexer) token.Token {
 	}
 
 	return integer(l)
+}
+
+// Skips comment, only records that there was a comment
+func comment(l *Lexer) token.Token {
+
+	tokenStart := l.position
+	line := l.line
+
+	for l.ch != '\n' || l.ch == 0 {
+		l.readChar()
+	}
+
+	return newToken(token.COMMENT, "#", tokenStart, line)
+}
+
+// Assumes that l.ch is a " to start
+func stringLiteral(l *Lexer) token.Token {
+
+	var sb strings.Builder
+	tokenStart := l.position
+	line := l.line
+
+	l.readChar()
+
+	for l.ch != '"' {
+
+		if l.ch == 0 {
+			error(fmt.Sprintf("LEXER ERROR: Reached EOF before string completed, line %d, column %d",
+				l.line, l.position))
+		}
+
+		if l.ch == '\n' {
+			error(fmt.Sprintf("LEXER ERROR: Illegal newline in string, line %d, column %d",
+				l.line, l.position))
+		}
+
+		sb.WriteByte(l.ch)
+		l.readChar()
+	}
+
+	return newToken(token.STRING, sb.String(), tokenStart, line)
+}
+
+func error(errorMsg string) {
+	fmt.Println(errorMsg)
+	os.Exit(-1)
 }

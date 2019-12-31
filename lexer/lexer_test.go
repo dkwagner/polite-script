@@ -76,7 +76,9 @@ func TestReadChar_WhenReadPositionWithinInput(t *testing.T) {
 }
 
 func TestNextToken(t *testing.T) {
-	input := `( ) { } # + - * / 
+	input := `( ) { } + - * /
+# This is a comment
+"This is a string"
 abcde 123 -123`
 
 	tests := []struct {
@@ -89,15 +91,16 @@ abcde 123 -123`
 		{token.RPAREN, ")", 2, 1},
 		{token.LBRACE, "{", 4, 1},
 		{token.RBRACE, "}", 6, 1},
-		{token.COMMENT, "#", 8, 1},
-		{token.OP_PLUS, "+", 10, 1},
-		{token.OP_MINUS, "-", 12, 1},
-		{token.OP_MULT, "*", 14, 1},
-		{token.OP_DIV, "/", 16, 1},
-		{token.ID, "abcde", 0, 2},
-		{token.INT, "123", 6, 2},
-		{token.INT, "-123", 10, 2},
-		{token.EOF, "", 14, 2},
+		{token.OP_PLUS, "+", 8, 1},
+		{token.OP_MINUS, "-", 10, 1},
+		{token.OP_MULT, "*", 12, 1},
+		{token.OP_DIV, "/", 14, 1},
+		{token.COMMENT, "#", 0, 2},
+		{token.STRING, "This is a string", 0, 3},
+		{token.ID, "abcde", 0, 4},
+		{token.INT, "123", 6, 4},
+		{token.INT, "-123", 10, 4},
+		{token.EOF, "", 13, 4},
 	}
 
 	l := New(input)
