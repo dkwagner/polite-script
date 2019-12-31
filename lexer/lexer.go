@@ -40,8 +40,7 @@ type Lexer struct {
 }
 
 func New(input string) *Lexer {
-	l := &Lexer{input: input, line: 1, position: -1}
-	l.readChar()
+	l := &Lexer{input: input, line: 1, position: 0, readPosition: 1, ch: input[0]}
 	return l
 }
 
@@ -73,6 +72,14 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.OP_DIV, "/", l.position, l.line)
 	case '"':
 		tok = stringLiteral(l)
+	case 'i':
+		keyphrases := []string{token.OP_GREATER_OR_EQUAL,
+			token.OP_GREATER,
+			token.OP_LESS_OR_EQUAL,
+			token.OP_LESS,
+			token.OP_EQUAL,
+			token.TYPE_INT}
+		tok = lookupKeyphrase(l, keyphrases)
 	case 0:
 		tok = newToken(token.EOF, "", l.position, l.line)
 	default:
@@ -96,7 +103,8 @@ func (l *Lexer) readChar() {
 	// still increment readPosition to next character in input for next readChar call
 	if l.ch == '\n' {
 		l.line++
-		l.position = -1
+		l.position = 0
+		l.ch = l.input[l.readPosition]
 		l.readPosition++
 		return
 	}
@@ -107,6 +115,38 @@ func (l *Lexer) readChar() {
 
 func newToken(tokenType token.TokenType, literal string, pos int, line int) token.Token {
 	return token.Token{Type: tokenType, Literal: literal, Position: pos, Line: line}
+}
+
+func lookupKeyphrase(l *Lexer, tokenTypes []string) token.Token {
+
+	line := l.line
+	position := l.position
+
+	for _, tt := range tokenTypes {
+		keyphrase := reservedPhrases[tt]
+
+		// If keyphrase not in list, throw an error, we made a goof
+		if keyphrase == "" {
+			error(fmt.Sprintf("ERROR: Invalid keyphrase type %s", tt))
+		}
+
+		// check that keyphrase is not longer than input
+		// if so, skip this keyphrase in the list
+		if len(keyphrase)+l.position > len(l.input) {
+			continue
+		}
+
+		subString := string(l.input[l.position : l.position+len(keyphrase)])
+
+		if subString == keyphrase {
+			l.position = l.position + len(keyphrase)
+			l.readPosition = l.readPosition + len(keyphrase)
+			l.ch = l.input[l.readPosition-1]
+			return newToken(token.TokenType(tt), subString, position, line)
+		}
+	}
+
+	return identifier(l)
 }
 
 func identifierOrInteger(l *Lexer) token.Token {

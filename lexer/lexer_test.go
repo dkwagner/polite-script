@@ -79,6 +79,13 @@ func TestNextToken(t *testing.T) {
 	input := `( ) { } + - * /
 # This is a comment
 "This is a string"
+is greater than or equal to
+is greater than
+is less than or equal to
+is less than
+is equal to
+integer
+i
 abcde 123 -123`
 
 	tests := []struct {
@@ -97,10 +104,17 @@ abcde 123 -123`
 		{token.OP_DIV, "/", 14, 1},
 		{token.COMMENT, "#", 0, 2},
 		{token.STRING, "This is a string", 0, 3},
-		{token.ID, "abcde", 0, 4},
-		{token.INT, "123", 6, 4},
-		{token.INT, "-123", 10, 4},
-		{token.EOF, "", 13, 4},
+		{token.OP_GREATER_OR_EQUAL, "is greater than or equal to", 0, 4},
+		{token.OP_GREATER, "is greater than", 0, 5},
+		{token.OP_LESS_OR_EQUAL, "is less than or equal to", 0, 6},
+		{token.OP_LESS, "is less than", 0, 7},
+		{token.OP_EQUAL, "is equal to", 0, 8},
+		{token.TYPE_INT, "integer", 0, 9},
+		{token.ID, "i", 0, 10},
+		{token.ID, "abcde", 0, 11},
+		{token.INT, "123", 6, 11},
+		{token.INT, "-123", 10, 11},
+		{token.EOF, "", 13, 11},
 	}
 
 	l := New(input)
