@@ -3,8 +3,8 @@ package lexer
 import (
 	"fmt"
 	"os"
-	"polite-script/token"
-	"polite-script/util"
+	"pscript/token"
+	"pscript/util"
 	"strings"
 )
 
@@ -176,7 +176,12 @@ func lookupKeyphrase(l *Lexer, tokenTypes []string) token.Token {
 		if subString == keyphrase {
 			l.position = l.position + len(keyphrase)
 			l.readPosition = l.readPosition + len(keyphrase)
-			l.ch = l.input[l.readPosition-1]
+
+			if l.readPosition > len(l.input) {
+				l.ch = l.input[len(l.input)-1]
+			} else {
+				l.ch = l.input[l.readPosition-1]
+			}
 			return newToken(token.TokenType(tt), subString, position, line)
 		}
 	}

@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"polite-script/token"
+	"pscript/token"
 	"testing"
 )
 
