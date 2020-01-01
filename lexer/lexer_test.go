@@ -111,6 +111,18 @@ is equal to
 integer
 i
 Please
+Thanks
+check if
+set
+loop while
+define function
+with arguments
+that returns
+boolean
+string
+equal to
+true
+false
 abcde 123 -123`
 
 	tests := []struct {
@@ -137,10 +149,22 @@ abcde 123 -123`
 		{token.TYPE_INT, "integer", 0, 9},
 		{token.ID, "i", 0, 10},
 		{token.KEYPHRASE_START, "Please", 0, 11},
-		{token.ID, "abcde", 0, 12},
-		{token.INT, "123", 6, 12},
-		{token.INT, "-123", 10, 12},
-		{token.EOF, "", 13, 12},
+		{token.KEYPHRASE_END, "Thanks", 0, 12},
+		{token.KEYPHRASE_IF, "check if", 0, 13},
+		{token.KEYPHRASE_DECLARE, "set", 0, 14},
+		{token.KEYPHRASE_LOOP, "loop while", 0, 15},
+		{token.KEYPHRASE_FUNC_DECL, "define function", 0, 16},
+		{token.KEYPHRASE_ARG_DECL, "with arguments", 0, 17},
+		{token.KEYPHRASE_RETURN, "that returns", 0, 18},
+		{token.TYPE_BOOL, "boolean", 0, 19},
+		{token.TYPE_STRING, "string", 0, 20},
+		{token.OP_ASSIGN, "equal to", 0, 21},
+		{token.KEYWORD_TRUE, "true", 0, 22},
+		{token.KEYWORD_FALSE, "false", 0, 23},
+		{token.ID, "abcde", 0, 24},
+		{token.INT, "123", 6, 24},
+		{token.INT, "-123", 10, 24},
+		{token.EOF, "", 13, 24},
 	}
 
 	l := New(input)

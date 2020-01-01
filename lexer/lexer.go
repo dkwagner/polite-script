@@ -18,7 +18,7 @@ func init() {
 	reservedPhrases[token.KEYPHRASE_LOOP] = "loop while"
 	reservedPhrases[token.KEYPHRASE_FUNC_DECL] = "define function"
 	reservedPhrases[token.KEYPHRASE_ARG_DECL] = "with arguments"
-	reservedPhrases[token.KEYPHRASE_RETURN_DECAL] = "that returns"
+	reservedPhrases[token.KEYPHRASE_RETURN] = "that returns"
 	reservedPhrases[token.TYPE_BOOL] = "boolean"
 	reservedPhrases[token.TYPE_STRING] = "string"
 	reservedPhrases[token.TYPE_INT] = "integer"
@@ -29,6 +29,8 @@ func init() {
 	reservedPhrases[token.OP_LESS] = "is less than"
 	reservedPhrases[token.OP_GREATER_OR_EQUAL] = "is greater than or equal to"
 	reservedPhrases[token.OP_LESS_OR_EQUAL] = "is less than or equal to"
+	reservedPhrases[token.KEYWORD_TRUE] = "true"
+	reservedPhrases[token.KEYWORD_FALSE] = "false"
 }
 
 type Lexer struct {
@@ -83,6 +85,36 @@ func (l *Lexer) NextToken() token.Token {
 	case 'P':
 		keyphrases := []string{token.KEYPHRASE_START}
 		tok = lookupKeyphrase(l, keyphrases)
+	case 'T':
+		keyphrases := []string{token.KEYPHRASE_END}
+		tok = lookupKeyphrase(l, keyphrases)
+	case 'c':
+		keyphrases := []string{token.KEYPHRASE_IF}
+		tok = lookupKeyphrase(l, keyphrases)
+	case 's':
+		keyphrases := []string{token.KEYPHRASE_DECLARE, token.TYPE_STRING}
+		tok = lookupKeyphrase(l, keyphrases)
+	case 'l':
+		keyphrases := []string{token.KEYPHRASE_LOOP}
+		tok = lookupKeyphrase(l, keyphrases)
+	case 'd':
+		keyphrases := []string{token.KEYPHRASE_FUNC_DECL}
+		tok = lookupKeyphrase(l, keyphrases)
+	case 'w':
+		keyphrases := []string{token.KEYPHRASE_ARG_DECL}
+		tok = lookupKeyphrase(l, keyphrases)
+	case 't':
+		keyphrases := []string{token.KEYPHRASE_RETURN, token.KEYWORD_TRUE}
+		tok = lookupKeyphrase(l, keyphrases)
+	case 'f':
+		keyphrases := []string{token.KEYWORD_FALSE}
+		tok = lookupKeyphrase(l, keyphrases)
+	case 'b':
+		keyphrases := []string{token.TYPE_BOOL}
+		tok = lookupKeyphrase(l, keyphrases)
+	case 'e':
+		keyphrases := []string{token.OP_ASSIGN}
+		tok = lookupKeyphrase(l, keyphrases)
 	case 0:
 		tok = newToken(token.EOF, "", l.position, l.line)
 	default:
@@ -128,8 +160,6 @@ func lookupKeyphrase(l *Lexer, tokenTypes []string) token.Token {
 	for _, tt := range tokenTypes {
 		keyphrase := reservedPhrases[tt]
 
-		fmt.Println("keyphrase:", keyphrase)
-
 		// If keyphrase not in list, throw an error, we made a goof
 		if keyphrase == "" {
 			error(fmt.Sprintf("ERROR: Invalid keyphrase type %s", tt))
@@ -142,8 +172,6 @@ func lookupKeyphrase(l *Lexer, tokenTypes []string) token.Token {
 		}
 
 		subString := string(l.input[cursor : cursor+len(keyphrase)])
-
-		fmt.Println("substring:", subString)
 
 		if subString == keyphrase {
 			l.position = l.position + len(keyphrase)
