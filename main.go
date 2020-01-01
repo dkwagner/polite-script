@@ -13,7 +13,7 @@ const pscriptLogo = ` ___     _ _ _         ___        _      _
 				   |_|        `
 
 func main() {
-	fmt.Printf("%s\n\nHello, and welcome to polite-script!\n", pscriptLogo)
+	fmt.Printf("%s\n\nHello, and welcome to polite-script!\n(To exit type 'exit' or ctrl+c)\n", pscriptLogo)
 
 	repl.Start(os.Stdin, os.Stdout)
 }

@@ -100,7 +100,7 @@ func TestReadChar_WhenNewLine(t *testing.T) {
 }
 
 func TestNextToken(t *testing.T) {
-	input := `( ) { } + - * /
+	input := `( ) { } + - * / ,
 # This is a comment
 "This is a string"
 is greater than or equal to
@@ -123,7 +123,8 @@ string
 equal to
 true
 false
-abcde 123 -123`
+abcde 123 -123
+identifier,`
 
 	tests := []struct {
 		expectedType     token.TokenType
@@ -139,6 +140,7 @@ abcde 123 -123`
 		{token.OP_MINUS, "-", 10, 1},
 		{token.OP_MULT, "*", 12, 1},
 		{token.OP_DIV, "/", 14, 1},
+		{token.COMMA, ",", 16, 1},
 		{token.COMMENT, "#", 0, 2},
 		{token.STRING, "This is a string", 0, 3},
 		{token.OP_GREATER_OR_EQUAL, "is greater than or equal to", 0, 4},
@@ -164,7 +166,9 @@ abcde 123 -123`
 		{token.ID, "abcde", 0, 24},
 		{token.INT, "123", 6, 24},
 		{token.INT, "-123", 10, 24},
-		{token.EOF, "", 13, 24},
+		{token.ID, "identifier", 0, 25},
+		{token.COMMA, ",", 10, 25},
+		{token.EOF, "", 10, 25},
 	}
 
 	l := New(input)

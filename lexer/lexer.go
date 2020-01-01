@@ -74,6 +74,8 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.OP_DIV, "/", l.position, l.line)
 	case '"':
 		tok = stringLiteral(l)
+	case ',':
+		tok = newToken(token.COMMA, ",", l.position, l.line)
 	case 'i':
 		keyphrases := []string{token.OP_GREATER_OR_EQUAL,
 			token.OP_GREATER,
@@ -174,8 +176,8 @@ func lookupKeyphrase(l *Lexer, tokenTypes []string) token.Token {
 		subString := string(l.input[cursor : cursor+len(keyphrase)])
 
 		if subString == keyphrase {
-			l.position = l.position + len(keyphrase)
-			l.readPosition = l.readPosition + len(keyphrase)
+			l.position = l.position + (len(keyphrase) - 1)
+			l.readPosition = l.readPosition + (len(keyphrase) - 1)
 
 			if l.readPosition > len(l.input) {
 				l.ch = l.input[len(l.input)-1]
@@ -202,13 +204,22 @@ func identifier(l *Lexer) token.Token {
 
 	var sb strings.Builder
 	tokenStart := l.position
+	line := l.line
 
-	for util.IsLetter(l.ch) || util.IsDigit(l.ch) || l.ch == '_' {
+	reservedTokens := []byte{'(', ')', '{', '}', ',', '[', ']'}
+
+	for (util.IsLetter(l.ch) || util.IsDigit(l.ch) || l.ch == '_') && !util.ContainsByte(l.ch, reservedTokens) {
 		sb.WriteByte(l.ch)
 		l.readChar()
 	}
 
-	return newToken(token.ID, sb.String(), tokenStart, l.line)
+	// Rewind input one character
+	// since we will read a char after this
+	l.position--
+	l.readPosition--
+	l.ch = l.input[l.position]
+
+	return newToken(token.ID, sb.String(), tokenStart, line)
 }
 
 func integer(l *Lexer) token.Token {

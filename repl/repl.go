@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 	"pscript/lexer"
 	"pscript/token"
 )
 
-const prompt = ">>"
+const prompt = ">> "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
@@ -20,6 +21,11 @@ func Start(in io.Reader, out io.Writer) {
 			return
 		}
 		line := scanner.Text()
+
+		// Allow user to exit
+		if line == "exit" {
+			os.Exit(0)
+		}
 
 		l := lexer.New(line)
 

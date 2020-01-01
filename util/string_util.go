@@ -26,3 +26,27 @@ func IsWhitespace(ch byte) bool {
 
 	return false
 }
+
+func ContainsString(testString string, list []string) bool {
+
+	for _, str := range list {
+
+		if str == testString {
+			return true
+		}
+	}
+
+	return false
+}
+
+func ContainsByte(testByte byte, list []byte) bool {
+
+	for _, b := range list {
+
+		if b == testByte {
+			return true
+		}
+	}
+
+	return false
+}

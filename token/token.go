@@ -23,6 +23,7 @@ const (
 	RPAREN = ")"
 	LBRACE = "{"
 	RBRACE = "}"
+	COMMA  = ","
 
 	// Keyphrases
 	KEYPHRASE_START     = "START"

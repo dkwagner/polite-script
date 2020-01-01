@@ -74,3 +74,43 @@ func TestIsWhitespace(t *testing.T) {
 		}
 	}
 }
+
+func TestContainsString(t *testing.T) {
+	testList := []string{"test1", "matches", "test2"}
+
+	tests := []struct {
+		testString string
+		expected   bool
+	}{
+		{testString: "matches", expected: true},
+		{testString: "no match", expected: false},
+	}
+
+	for _, tt := range tests {
+		actual := ContainsString(tt.testString, testList)
+
+		if actual != tt.expected {
+			t.Errorf("Test [%s] Failed: expected %t, got %t", tt.testString, tt.expected, actual)
+		}
+	}
+}
+
+func TestContainsByte(t *testing.T) {
+	testList := []byte{'(', ')', '{', '}', ',', '[', ']'}
+
+	tests := []struct {
+		testByte byte
+		expected bool
+	}{
+		{testByte: '[', expected: true},
+		{testByte: 'n', expected: false},
+	}
+
+	for _, tt := range tests {
+		actual := ContainsByte(tt.testByte, testList)
+
+		if actual != tt.expected {
+			t.Errorf("Test [%q] Failed: expected %t, got %t", tt.testByte, tt.expected, actual)
+		}
+	}
+}
