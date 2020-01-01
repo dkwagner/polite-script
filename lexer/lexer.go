@@ -80,6 +80,9 @@ func (l *Lexer) NextToken() token.Token {
 			token.OP_EQUAL,
 			token.TYPE_INT}
 		tok = lookupKeyphrase(l, keyphrases)
+	case 'P':
+		keyphrases := []string{token.KEYPHRASE_START}
+		tok = lookupKeyphrase(l, keyphrases)
 	case 0:
 		tok = newToken(token.EOF, "", l.position, l.line)
 	default:
@@ -96,9 +99,6 @@ func (l *Lexer) readChar() {
 		return
 	}
 
-	l.ch = l.input[l.readPosition]
-	fmt.Printf("reading: %q @ position: %d\n", l.ch, l.position)
-
 	// if newline, set position to 0, and increment line
 	// still increment readPosition to next character in input for next readChar call
 	if l.ch == '\n' {
@@ -108,6 +108,8 @@ func (l *Lexer) readChar() {
 		l.readPosition++
 		return
 	}
+
+	l.ch = l.input[l.readPosition]
 
 	l.position++
 	l.readPosition++
@@ -121,9 +123,12 @@ func lookupKeyphrase(l *Lexer, tokenTypes []string) token.Token {
 
 	line := l.line
 	position := l.position
+	cursor := l.readPosition - 1
 
 	for _, tt := range tokenTypes {
 		keyphrase := reservedPhrases[tt]
+
+		fmt.Println("keyphrase:", keyphrase)
 
 		// If keyphrase not in list, throw an error, we made a goof
 		if keyphrase == "" {
@@ -132,11 +137,13 @@ func lookupKeyphrase(l *Lexer, tokenTypes []string) token.Token {
 
 		// check that keyphrase is not longer than input
 		// if so, skip this keyphrase in the list
-		if len(keyphrase)+l.position > len(l.input) {
+		if len(keyphrase)+cursor > len(l.input) {
 			continue
 		}
 
-		subString := string(l.input[l.position : l.position+len(keyphrase)])
+		subString := string(l.input[cursor : cursor+len(keyphrase)])
+
+		fmt.Println("substring:", subString)
 
 		if subString == keyphrase {
 			l.position = l.position + len(keyphrase)

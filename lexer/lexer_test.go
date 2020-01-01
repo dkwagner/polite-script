@@ -75,6 +75,30 @@ func TestReadChar_WhenReadPositionWithinInput(t *testing.T) {
 	}
 }
 
+func TestReadChar_WhenNewLine(t *testing.T) {
+	input := `
+(`
+	l := New(input)
+
+	l.readChar()
+
+	if l.position != 0 {
+		t.Errorf("Lexer.position wrong, expected 0, got %d", l.position)
+	}
+
+	if l.line != 2 {
+		t.Errorf("Lexer.line wrong, expected 1, got %d", l.line)
+	}
+
+	if l.readPosition != 2 {
+		t.Errorf("Lexer.readPosition wrong, expected 2, got %d", l.readPosition)
+	}
+
+	if l.ch != '(' {
+		t.Errorf("Lexer.ch wrong, expected (, got %q", l.ch)
+	}
+}
+
 func TestNextToken(t *testing.T) {
 	input := `( ) { } + - * /
 # This is a comment
@@ -86,6 +110,7 @@ is less than
 is equal to
 integer
 i
+Please
 abcde 123 -123`
 
 	tests := []struct {
@@ -111,10 +136,11 @@ abcde 123 -123`
 		{token.OP_EQUAL, "is equal to", 0, 8},
 		{token.TYPE_INT, "integer", 0, 9},
 		{token.ID, "i", 0, 10},
-		{token.ID, "abcde", 0, 11},
-		{token.INT, "123", 6, 11},
-		{token.INT, "-123", 10, 11},
-		{token.EOF, "", 13, 11},
+		{token.KEYPHRASE_START, "Please", 0, 11},
+		{token.ID, "abcde", 0, 12},
+		{token.INT, "123", 6, 12},
+		{token.INT, "-123", 10, 12},
+		{token.EOF, "", 13, 12},
 	}
 
 	l := New(input)
