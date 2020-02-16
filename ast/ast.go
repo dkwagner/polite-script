@@ -28,17 +28,6 @@ func (p *Program) TokenLiteral() string {
 	return ""
 }
 
-// Declaration statement
-// token.DECLARE
-type DeclarationStatement struct {
-	Token token.Token
-	Name  *Identifier
-	Value Expression
-}
-
-func (ls *DeclarationStatement) statementNode()       {}
-func (ls *DeclarationStatement) TokenLiteral() string { return ls.Token.Literal }
-
 // Identifier Expression
 // token.ID
 type Identifier struct {
@@ -48,3 +37,14 @@ type Identifier struct {
 
 func (i *Identifier) expressionNode()      {}
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
+
+// DeclarationStatement ast
+// token.DECLARE
+type DeclarationStatement struct {
+	Token token.Token
+	Name  *Identifier
+	Value Expression
+}
+
+func (ls *DeclarationStatement) statementNode()       {}
+func (ls *DeclarationStatement) TokenLiteral() string { return ls.Token.Literal }
