@@ -1,8 +1,9 @@
 package lexer
 
 import (
-	"pscript/token"
 	"testing"
+
+	"github.com/dkwagner/pscript/token"
 )
 
 func TestNew(t *testing.T) {

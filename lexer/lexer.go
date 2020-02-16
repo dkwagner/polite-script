@@ -3,9 +3,10 @@ package lexer
 import (
 	"fmt"
 	"os"
-	"pscript/token"
-	"pscript/util"
 	"strings"
+
+	"github.com/dkwagner/pscript/token"
+	"github.com/dkwagner/pscript/util"
 )
 
 var reservedPhrases map[string]string = make(map[string]string)

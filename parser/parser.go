@@ -1,10 +1,12 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
-	"pscript/ast"
-	"pscript/lexer"
-	"pscript/token"
+
+	"github.com/dkwagner/pscript/ast"
+	"github.com/dkwagner/pscript/lexer"
+	"github.com/dkwagner/pscript/token"
 )
 
 // Parser struct representing the parser
@@ -71,9 +73,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 	for !p.curTokenIs(token.EOF) {
 		stmt := p.parseStatement()
-		if stmt == nil {
-		} else {
-			fmt.Println("Declaration Statement", stmt)
+		if stmt != nil {
 			program.Statements = append(program.Statements, stmt)
 		}
 		p.nextToken()
@@ -82,23 +82,36 @@ func (p *Parser) ParseProgram() *ast.Program {
 	return program
 }
 
+// Double check that a statement is legit
+// This is done because thats the way it is
+// But really this has to do with pointers getting returned that are
+// actually pointers pointing to nil
+// imagine something like *nil, but you cant do that with golang
+// so here we are
+func (p *Parser) validateStatement(stmt ast.Statement, err error) ast.Statement {
+	if err != nil {
+		return nil
+	}
+	return stmt
+}
+
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.KEYPHRASE_DECLARE:
-		return p.parseDeclarationStatement()
+		return p.validateStatement(p.parseDeclarationStatement())
 	default:
 		return nil
 	}
 }
 
-func (p *Parser) parseDeclarationStatement() *ast.DeclarationStatement {
+func (p *Parser) parseDeclarationStatement() (*ast.DeclarationStatement, error) {
 	stmt := &ast.DeclarationStatement{Token: p.curToken}
 
 	if !p.expectPeek(token.ID) {
-		return nil
+		return nil, errors.New("Did not get expected token ID")
 	}
 
 	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
-	return stmt
+	return stmt, nil
 }

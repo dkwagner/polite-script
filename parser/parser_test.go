@@ -1,9 +1,10 @@
 package parser
 
 import (
-	"pscript/ast"
-	"pscript/lexer"
 	"testing"
+
+	"github.com/dkwagner/pscript/ast"
+	"github.com/dkwagner/pscript/lexer"
 )
 
 func TestNew(t *testing.T) {

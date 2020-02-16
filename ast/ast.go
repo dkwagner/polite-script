@@ -1,6 +1,6 @@
 package ast
 
-import "pscript/token"
+import "github.com/dkwagner/pscript/token"
 
 type Node interface {
 	TokenLiteral() string

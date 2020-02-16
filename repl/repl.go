@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"pscript/lexer"
-	"pscript/token"
+
+	"github.com/dkwagner/pscript/lexer"
+	"github.com/dkwagner/pscript/token"
 )
 
 const prompt = ">> "

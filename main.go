@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"pscript/repl"
+
+	"github.com/dkwagner/pscript/repl"
 )
 
 const pscriptLogo = ` ___     _ _ _         ___        _      _    
