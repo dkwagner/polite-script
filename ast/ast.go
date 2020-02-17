@@ -46,5 +46,17 @@ type DeclarationStatement struct {
 	Value Expression
 }
 
-func (ls *DeclarationStatement) statementNode()       {}
-func (ls *DeclarationStatement) TokenLiteral() string { return ls.Token.Literal }
+// TokenLiteral returns token literal for DeclarationStatment
+func (ds *DeclarationStatement) TokenLiteral() string { return ds.Token.Literal }
+func (ds *DeclarationStatement) statementNode()       {}
+
+// ReturnStatment ast
+// token.KEYPHRASE_RETURN
+type ReturnStatement struct {
+	Token       token.Token
+	ReturnValue Expression
+}
+
+// TokenLiteral returns token literal for ReturnStatment
+func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
+func (rs *ReturnStatement) statementNode()       {}
