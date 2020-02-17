@@ -118,7 +118,7 @@ set
 loop while
 define function
 with arguments
-that returns
+Returns
 boolean
 string
 equal to
@@ -158,7 +158,7 @@ identifier,`
 		{token.KEYPHRASE_LOOP, "loop while", 0, 15},
 		{token.KEYPHRASE_FUNC_DECL, "define function", 0, 16},
 		{token.KEYPHRASE_ARG_DECL, "with arguments", 0, 17},
-		{token.KEYPHRASE_RETURN, "that returns", 0, 18},
+		{token.KEYPHRASE_RETURN, "Returns", 0, 18},
 		{token.TYPE_BOOL, "boolean", 0, 19},
 		{token.TYPE_STRING, "string", 0, 20},
 		{token.OP_ASSIGN, "equal to", 0, 21},

@@ -19,7 +19,7 @@ func init() {
 	reservedPhrases[token.KEYPHRASE_LOOP] = "loop while"
 	reservedPhrases[token.KEYPHRASE_FUNC_DECL] = "define function"
 	reservedPhrases[token.KEYPHRASE_ARG_DECL] = "with arguments"
-	reservedPhrases[token.KEYPHRASE_RETURN] = "that returns"
+	reservedPhrases[token.KEYPHRASE_RETURN] = "Returns"
 	reservedPhrases[token.TYPE_BOOL] = "boolean"
 	reservedPhrases[token.TYPE_STRING] = "string"
 	reservedPhrases[token.TYPE_INT] = "integer"
@@ -34,6 +34,7 @@ func init() {
 	reservedPhrases[token.KEYWORD_FALSE] = "false"
 }
 
+// Lexer lexes input based on given keyphrases
 type Lexer struct {
 	input        string
 	position     int  // current position in input (points to current char in context of line)
@@ -42,11 +43,13 @@ type Lexer struct {
 	ch           byte // current char under examination
 }
 
+// New creates new lexer
 func New(input string) *Lexer {
 	l := &Lexer{input: input, line: 1, position: 0, readPosition: 1, ch: input[0]}
 	return l
 }
 
+// NextToken gets next token in input
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
@@ -85,6 +88,9 @@ func (l *Lexer) NextToken() token.Token {
 			token.OP_EQUAL,
 			token.TYPE_INT}
 		tok = lookupKeyphrase(l, keyphrases)
+	case 'R':
+		keyphrases := []string{token.KEYPHRASE_RETURN}
+		tok = lookupKeyphrase(l, keyphrases)
 	case 'P':
 		keyphrases := []string{token.KEYPHRASE_START}
 		tok = lookupKeyphrase(l, keyphrases)
@@ -107,7 +113,7 @@ func (l *Lexer) NextToken() token.Token {
 		keyphrases := []string{token.KEYPHRASE_ARG_DECL}
 		tok = lookupKeyphrase(l, keyphrases)
 	case 't':
-		keyphrases := []string{token.KEYPHRASE_RETURN, token.KEYWORD_TRUE}
+		keyphrases := []string{token.KEYWORD_TRUE}
 		tok = lookupKeyphrase(l, keyphrases)
 	case 'f':
 		keyphrases := []string{token.KEYWORD_FALSE}
