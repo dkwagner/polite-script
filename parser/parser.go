@@ -87,7 +87,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 // But really this has to do with pointers getting returned that are
 // actually pointers pointing to nil
 // imagine something like *nil, but you cant do that with golang
-// so here we are
+// so here we are here is a change
 func (p *Parser) validateStatement(stmt ast.Statement, err error) ast.Statement {
 	if err != nil {
 		return nil
