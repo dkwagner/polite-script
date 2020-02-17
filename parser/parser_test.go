@@ -34,7 +34,7 @@ func TestNew(t *testing.T) {
 func TestDeclarationStatements(t *testing.T) {
 	input := `
 Please set x equal to 5
-Please set 23 equal to 3
+Please set a equal to 3
 Please set b equal to -1
 `
 	l := lexer.New(input)
