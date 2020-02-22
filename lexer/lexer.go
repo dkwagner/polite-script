@@ -80,6 +80,8 @@ func (l *Lexer) NextToken() token.Token {
 		tok = stringLiteral(l)
 	case ',':
 		tok = newToken(token.COMMA, ",", l.position, l.line)
+	case '.':
+		tok = newToken(token.END_LINE, ".", l.position, l.line)
 	case 'i':
 		keyphrases := []string{token.OP_GREATER_OR_EQUAL,
 			token.OP_GREATER,
@@ -136,6 +138,8 @@ func (l *Lexer) NextToken() token.Token {
 
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
+		l.position++
+		l.readPosition++
 		l.ch = 0
 		return
 	}
@@ -213,7 +217,7 @@ func identifier(l *Lexer) token.Token {
 	tokenStart := l.position
 	line := l.line
 
-	reservedTokens := []byte{'(', ')', '{', '}', ',', '[', ']'}
+	reservedTokens := []byte{'(', ')', '{', '}', ',', '[', ']', '.'}
 
 	for (util.IsLetter(l.ch) || util.IsDigit(l.ch) || l.ch == '_') && !util.ContainsByte(l.ch, reservedTokens) {
 		sb.WriteByte(l.ch)

@@ -125,7 +125,7 @@ equal to
 true
 false
 abcde 123 -123
-identifier,`
+identifier.,`
 
 	tests := []struct {
 		expectedType     token.TokenType
@@ -168,8 +168,9 @@ identifier,`
 		{token.INT, "123", 6, 24},
 		{token.INT, "-123", 10, 24},
 		{token.ID, "identifier", 0, 25},
-		{token.COMMA, ",", 10, 25},
-		{token.EOF, "", 10, 25},
+		{token.END_LINE, ".", 10, 25},
+		{token.COMMA, ",", 11, 25},
+		{token.EOF, "", 12, 25},
 	}
 
 	l := New(input)

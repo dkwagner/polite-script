@@ -99,6 +99,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.KEYPHRASE_DECLARE:
 		return p.validateStatement(p.parseDeclarationStatement())
+	case token.KEYPHRASE_RETURN:
+		return p.validateStatement(p.parseReturnStatemnt())
 	default:
 		return nil
 	}
@@ -114,4 +116,12 @@ func (p *Parser) parseDeclarationStatement() (*ast.DeclarationStatement, error) 
 	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
 	return stmt, nil
+}
+
+func (p *Parser) parseReturnStatemnt() (*ast.ReturnStatement, error) {
+	stmt := &ast.ReturnStatement{Token: p.curToken}
+
+	// TODO implement expression parsing
+	p.nextToken()
+
 }
