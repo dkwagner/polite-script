@@ -87,7 +87,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 // But really this has to do with pointers getting returned that are
 // actually pointers pointing to nil
 // imagine something like *nil, but you cant do that with golang
-// so here we
+// so here we are
 func (p *Parser) validateStatement(stmt ast.Statement, err error) ast.Statement {
 	if err != nil {
 		return nil
@@ -122,6 +122,12 @@ func (p *Parser) parseReturnStatemnt() (*ast.ReturnStatement, error) {
 	stmt := &ast.ReturnStatement{Token: p.curToken}
 
 	// TODO implement expression parsing
-	p.nextToken()
+	for !p.curTokenIs(token.END_LINE) {
+		if p.curTokenIs(token.EOF) {
+			return nil, errors.New("Did not get end line token before EOF")
+		}
+		p.nextToken()
+	}
 
+	return stmt, nil
 }
